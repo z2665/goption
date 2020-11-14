@@ -27,6 +27,9 @@ func MockOpenFile(filename string) (*os.File, error) {
 	}
 	return &os.File{}, nil
 }
+func WillreturnNil() *os.File {
+	return nil
+}
 func main() {
 	s := getSome()
 	if !s.Is_None() {
@@ -69,7 +72,12 @@ func main() {
 		}
 	}()
 	// o.Unwrap()
+	file2 := goption.ToOption(WillreturnNil())
+	if file2.Is_None() {
+		fmt.Println("wget none")
+	}
 	file1 := goption.ToResult(MockOpenFile("a file")).Unwrap().(*os.File)
 	fmt.Printf("%v", file1)
 	goption.ToResult(MockOpenFile("not exists")).Unwrap()
+
 }

@@ -12,6 +12,7 @@ type vOk struct {
 	v interface{}
 }
 
+//Ok returns the type vOk
 func Ok(v interface{}) Result {
 	return &vOk{v: v}
 }
@@ -34,6 +35,7 @@ type vErr struct {
 	v error
 }
 
+//Err returns the type vErr
 func Err(v error) Result {
 	return &vErr{v: v}
 }

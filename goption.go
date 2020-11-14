@@ -1,5 +1,7 @@
 package goption
 
+import "reflect"
+
 // Option is  interface to be the type of function return
 type Option interface {
 	Is_None() bool
@@ -25,6 +27,8 @@ func (v *vSome) None(func()) Option {
 func (v *vSome) Get() interface{} {
 	return v.v
 }
+
+//Some return a type vSome
 func Some(v interface{}) Option {
 	return &vSome{v: v}
 }
@@ -44,6 +48,17 @@ func (v *vNone) None(f func()) Option {
 func (v *vNone) Get() interface{} {
 	panic("none not support get you should use is_none to check")
 }
+
+//None return a type vNone
 func None() Option {
 	return &vNone{}
+}
+
+//ToOption conver golang nil to option
+// if function return nil then this function return None
+func ToOption(v interface{}) Option {
+	if v == nil || (reflect.ValueOf(v).Kind() == reflect.Ptr && reflect.ValueOf(v).IsNil()) {
+		return None()
+	}
+	return Some(v)
 }
