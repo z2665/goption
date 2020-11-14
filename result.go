@@ -50,3 +50,11 @@ func (v *vErr) Is_Ok() bool {
 func (v *vErr) Unwrap() interface{} {
 	panic(v.v)
 }
+
+//ToResult conver golang function return to result
+func ToResult(i interface{}, err error) Result {
+	if err != nil {
+		return Err(err)
+	}
+	return Ok(i)
+}

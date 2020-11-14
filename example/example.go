@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"os"
 
 	"github.com/z2665/goption"
 )
@@ -19,7 +20,13 @@ func getOk() goption.Result {
 func getErr() goption.Result {
 	return goption.Err(errors.New("hello result is error"))
 }
+func MockOpenFile(filename string) (*os.File, error) {
+	if filename == "not exists" {
+		return nil, errors.New("not exists")
 
+	}
+	return &os.File{}, nil
+}
 func main() {
 	s := getSome()
 	if !s.Is_None() {
@@ -61,5 +68,8 @@ func main() {
 			fmt.Println("Recovered in f", r)
 		}
 	}()
-	o.Unwrap()
+	// o.Unwrap()
+	file1 := goption.ToResult(MockOpenFile("a file")).Unwrap().(*os.File)
+	fmt.Printf("%v", file1)
+	goption.ToResult(MockOpenFile("not exists")).Unwrap()
 }
