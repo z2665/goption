@@ -6,6 +6,7 @@ type Result interface {
 	Err(func(error)) Result
 	Is_Ok() bool
 	Unwrap() interface{}
+	And_then(func(interface{}) (interface{}, error)) Result
 }
 
 type vOk struct {
@@ -30,6 +31,13 @@ func (v *vOk) Is_Ok() bool {
 func (v *vOk) Unwrap() interface{} {
 	return v.v
 }
+func (v *vOk) And_then(f func(interface{}) (interface{}, error)) Result {
+	tmp, err := f(v.v)
+	if err != nil {
+		return Err(err)
+	}
+	return &vOk{v: tmp}
+}
 
 type vErr struct {
 	v error
@@ -51,6 +59,9 @@ func (v *vErr) Is_Ok() bool {
 }
 func (v *vErr) Unwrap() interface{} {
 	panic(v.v)
+}
+func (v *vErr) And_then(f func(interface{}) (interface{}, error)) Result {
+	return v
 }
 
 //ToResult conver golang function return to result
