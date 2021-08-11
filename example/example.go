@@ -77,7 +77,23 @@ func main() {
 		fmt.Println("wget none")
 	}
 	file1 := goption.ToResult(MockOpenFile("a file")).Unwrap().(*os.File)
-	fmt.Printf("%v", file1)
-	goption.ToResult(MockOpenFile("not exists")).Unwrap()
-
+	fmt.Printf("%v\n", file1)
+	goption.ToResult(MockOpenFile("not exists")).Err(func(e error) {
+		fmt.Println(e.Error())
+	})
+	//and_then
+	getOk().And_then(func(interface{}) (interface{}, error) {
+		fmt.Println("proc result 1")
+		return "result 1", nil
+	}).And_then(func(res interface{}) (interface{}, error) {
+		fmt.Printf("proc %s result 2\n", res)
+		return "result 2", nil
+	}).And_then(func(res interface{}) (interface{}, error) {
+		return nil, fmt.Errorf("proc err %d", 3)
+	}).And_then(func(res interface{}) (interface{}, error) {
+		fmt.Println("proc result 3")
+		return "result 3", nil
+	}).Err(func(e error) {
+		fmt.Println(e.Error())
+	})
 }
